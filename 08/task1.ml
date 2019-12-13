@@ -1,5 +1,8 @@
 open Format
 
+let width = 25
+let height = 6
+
 let rec pop_n xs n =
     match n with
       0 -> [], xs
@@ -13,7 +16,7 @@ let rec pop_ns xs n =
     let xs, rest = pop_n xs n in
     try
         xs :: pop_ns rest n
-    with Not_found -> []
+    with Not_found -> [xs]
 
 let get_input () =
     let input_string = read_line () in
@@ -62,7 +65,11 @@ let show_pixel = function Black -> " " | White -> "#"
 
 let () =
     let is = get_input () in
-    let layers = pop_ns is (25*6) in
+    let layers = pop_ns is (width*height) in
+    let layers = List.rev layers in
     let image = n_zip blend layers in
-    let ps = List.rev @@ pop_ns image 25 in
-    List.iter (fun line -> List.iter (fun p -> printf "%s" (show_pixel p)) line; printf "\n") ps
+    let ps = pop_ns image width in
+    List.iter (fun line -> 
+      List.iter (fun p -> printf "%s" (show_pixel p)) (List.rev line); 
+      printf "\n"
+    ) (List.rev ps)
